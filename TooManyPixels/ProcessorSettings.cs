@@ -3,20 +3,20 @@ using System.IO;
 
 namespace TooManyPixels
 {
-    internal struct ProcessorSettings
+    internal class ProcessorSettings
     {
-        public DirectoryInfo SourceDirectory { get; set; }
-        public DirectoryInfo DestinationDirector { get; set; }
-        public bool IsRecurive { get; set; }
-        public bool UseAlphaFormatOnly { get; set; }
-        public bool OnlyPassSquareImages { get; set; }
-        public bool DownsizeLargerResolutionImages { get; set; }
-        public bool CopySkippedFiles { get; set; }
-        public int CompressionLevel { get; set; }
-        public int TargetImageWidth { get; set; }
-        public int TargetImageHeight { get; set; }
-        public SupportedNonAlphaFileTypes ConvertToNonAlphaValue { get; set; }
-        public SupportedAlphaFileTypes ConvertToAlphaValue { get; set; }
+        public DirectoryInfo SourceDirectory { get; set; } = null;
+        public DirectoryInfo DestinationDirectory { get; set; } = null;
+        public bool IsRecurive { get; set; } = false;
+        public bool UseAlphaFormatOnly { get; set; } = false;
+        public bool OnlyPassSquareImages { get; set; } = false;
+        public bool DownsizeLargerResolutionImages { get; set; } = false;
+        public bool CopySkippedFiles { get; set; } = false;
+        public int CompressionLevel { get; set; } = 0;
+        public int TargetImageWidth { get; set; } = 0;
+        public int TargetImageHeight { get; set; } = 0;
+        public SupportedNonAlphaFileTypes ConvertToNonAlphaValue { get; set; } = 0;
+        public SupportedAlphaFileTypes ConvertToAlphaValue { get; set; } = 0;
     }
 
     internal enum SupportedNonAlphaFileTypes

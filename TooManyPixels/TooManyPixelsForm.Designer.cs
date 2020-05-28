@@ -214,9 +214,6 @@
             this.IfTransparentDropDown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.IfTransparentDropDown.Font = new System.Drawing.Font("Bahnschrift Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.IfTransparentDropDown.FormattingEnabled = true;
-            this.IfTransparentDropDown.Items.AddRange(new object[] {
-            "PNG",
-            "GIF"});
             this.IfTransparentDropDown.Location = new System.Drawing.Point(915, 849);
             this.IfTransparentDropDown.Name = "IfTransparentDropDown";
             this.IfTransparentDropDown.Size = new System.Drawing.Size(250, 30);
@@ -229,9 +226,6 @@
             this.ConvertToDropDown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ConvertToDropDown.Font = new System.Drawing.Font("Bahnschrift Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.ConvertToDropDown.FormattingEnabled = true;
-            this.ConvertToDropDown.Items.AddRange(new object[] {
-            "JPG",
-            "BMP"});
             this.ConvertToDropDown.Location = new System.Drawing.Point(915, 813);
             this.ConvertToDropDown.Name = "ConvertToDropDown";
             this.ConvertToDropDown.Size = new System.Drawing.Size(250, 30);
@@ -415,7 +409,6 @@
         }
 
         #endregion
-        private System.Windows.Forms.RichTextBox ConsoleTextBox;
         private System.Windows.Forms.Button StartButton;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
@@ -441,5 +434,6 @@
         internal System.Windows.Forms.CheckBox DownsizeCheckbox;
         internal System.Windows.Forms.CheckBox CopySkippedFilesCheckbox;
         internal System.Windows.Forms.Label OverallProgressLabel;
+        internal System.Windows.Forms.RichTextBox ConsoleTextBox;
     }
 }
