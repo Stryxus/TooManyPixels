@@ -52,11 +52,15 @@
             this.label1 = new System.Windows.Forms.Label();
             this.UseTransparentFormatCheckBox = new System.Windows.Forms.CheckBox();
             this.ConvertSquaresOnlyCheckBox = new System.Windows.Forms.CheckBox();
+            this.OnlyLargerThanWidthTextBox = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.OnlyLargerThanHeightTextBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // OverallProgressBar
             // 
-            this.OverallProgressBar.Location = new System.Drawing.Point(12, 698);
+            this.OverallProgressBar.Location = new System.Drawing.Point(13, 798);
             this.OverallProgressBar.Name = "OverallProgressBar";
             this.OverallProgressBar.Size = new System.Drawing.Size(754, 34);
             this.OverallProgressBar.TabIndex = 0;
@@ -67,7 +71,7 @@
             this.OverallProgressLabel.BackColor = System.Drawing.Color.Transparent;
             this.OverallProgressLabel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.OverallProgressLabel.Font = new System.Drawing.Font("Bahnschrift Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.OverallProgressLabel.Location = new System.Drawing.Point(12, 665);
+            this.OverallProgressLabel.Location = new System.Drawing.Point(13, 765);
             this.OverallProgressLabel.Name = "OverallProgressLabel";
             this.OverallProgressLabel.Size = new System.Drawing.Size(149, 22);
             this.OverallProgressLabel.TabIndex = 1;
@@ -79,7 +83,7 @@
             this.CurrentFileLabel.BackColor = System.Drawing.Color.Transparent;
             this.CurrentFileLabel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.CurrentFileLabel.Font = new System.Drawing.Font("Bahnschrift Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.CurrentFileLabel.Location = new System.Drawing.Point(246, 665);
+            this.CurrentFileLabel.Location = new System.Drawing.Point(247, 765);
             this.CurrentFileLabel.Name = "CurrentFileLabel";
             this.CurrentFileLabel.Size = new System.Drawing.Size(520, 22);
             this.CurrentFileLabel.TabIndex = 1;
@@ -102,9 +106,9 @@
             // StartButton
             // 
             this.StartButton.Font = new System.Drawing.Font("Bahnschrift Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.StartButton.Location = new System.Drawing.Point(12, 595);
+            this.StartButton.Location = new System.Drawing.Point(13, 691);
             this.StartButton.Name = "StartButton";
-            this.StartButton.Size = new System.Drawing.Size(225, 60);
+            this.StartButton.Size = new System.Drawing.Size(753, 60);
             this.StartButton.TabIndex = 3;
             this.StartButton.Text = "Start Processing";
             this.StartButton.UseVisualStyleBackColor = true;
@@ -280,7 +284,7 @@
             // 
             this.RecursiveCheckBox.AutoSize = true;
             this.RecursiveCheckBox.Font = new System.Drawing.Font("Bahnschrift Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.RecursiveCheckBox.Location = new System.Drawing.Point(252, 600);
+            this.RecursiveCheckBox.Location = new System.Drawing.Point(13, 600);
             this.RecursiveCheckBox.Name = "RecursiveCheckBox";
             this.RecursiveCheckBox.Size = new System.Drawing.Size(118, 26);
             this.RecursiveCheckBox.TabIndex = 7;
@@ -326,7 +330,7 @@
             // 
             this.UseTransparentFormatCheckBox.AutoSize = true;
             this.UseTransparentFormatCheckBox.Font = new System.Drawing.Font("Bahnschrift Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.UseTransparentFormatCheckBox.Location = new System.Drawing.Point(385, 600);
+            this.UseTransparentFormatCheckBox.Location = new System.Drawing.Point(147, 600);
             this.UseTransparentFormatCheckBox.Name = "UseTransparentFormatCheckBox";
             this.UseTransparentFormatCheckBox.Size = new System.Drawing.Size(251, 26);
             this.UseTransparentFormatCheckBox.TabIndex = 7;
@@ -337,19 +341,73 @@
             // 
             this.ConvertSquaresOnlyCheckBox.AutoSize = true;
             this.ConvertSquaresOnlyCheckBox.Font = new System.Drawing.Font("Bahnschrift Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.ConvertSquaresOnlyCheckBox.Location = new System.Drawing.Point(252, 630);
+            this.ConvertSquaresOnlyCheckBox.Location = new System.Drawing.Point(414, 600);
             this.ConvertSquaresOnlyCheckBox.Name = "ConvertSquaresOnlyCheckBox";
             this.ConvertSquaresOnlyCheckBox.Size = new System.Drawing.Size(269, 26);
             this.ConvertSquaresOnlyCheckBox.TabIndex = 7;
             this.ConvertSquaresOnlyCheckBox.Text = "Convert Square Images Only";
             this.ConvertSquaresOnlyCheckBox.UseVisualStyleBackColor = true;
             // 
+            // OnlyLargerThanWidthTextBox
+            // 
+            this.OnlyLargerThanWidthTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.OnlyLargerThanWidthTextBox.Font = new System.Drawing.Font("Bahnschrift Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.OnlyLargerThanWidthTextBox.Location = new System.Drawing.Point(260, 645);
+            this.OnlyLargerThanWidthTextBox.Multiline = true;
+            this.OnlyLargerThanWidthTextBox.Name = "OnlyLargerThanWidthTextBox";
+            this.OnlyLargerThanWidthTextBox.PlaceholderText = "Optional";
+            this.OnlyLargerThanWidthTextBox.Size = new System.Drawing.Size(100, 30);
+            this.OnlyLargerThanWidthTextBox.TabIndex = 4;
+            this.OnlyLargerThanWidthTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.OnlyLargerThanWidthTextBox.WordWrap = false;
+            this.OnlyLargerThanWidthTextBox.TextChanged += new System.EventHandler(this.WidthTextBox_TextChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Bahnschrift Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label2.Location = new System.Drawing.Point(12, 649);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(233, 22);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Only with larger width than";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Bahnschrift Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label9.Location = new System.Drawing.Point(385, 649);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(239, 22);
+            this.label9.TabIndex = 5;
+            this.label9.Text = "Only with larger height than";
+            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // OnlyLargerThanHeightTextBox
+            // 
+            this.OnlyLargerThanHeightTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.OnlyLargerThanHeightTextBox.Font = new System.Drawing.Font("Bahnschrift Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.OnlyLargerThanHeightTextBox.Location = new System.Drawing.Point(640, 645);
+            this.OnlyLargerThanHeightTextBox.Multiline = true;
+            this.OnlyLargerThanHeightTextBox.Name = "OnlyLargerThanHeightTextBox";
+            this.OnlyLargerThanHeightTextBox.PlaceholderText = "Optional";
+            this.OnlyLargerThanHeightTextBox.Size = new System.Drawing.Size(100, 30);
+            this.OnlyLargerThanHeightTextBox.TabIndex = 4;
+            this.OnlyLargerThanHeightTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.OnlyLargerThanHeightTextBox.WordWrap = false;
+            this.OnlyLargerThanHeightTextBox.TextChanged += new System.EventHandler(this.WidthTextBox_TextChanged);
+            // 
             // TooManyPixelsForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.ClientSize = new System.Drawing.Size(778, 744);
+            this.ClientSize = new System.Drawing.Size(778, 844);
+            this.Controls.Add(this.OnlyLargerThanHeightTextBox);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.OnlyLargerThanWidthTextBox);
             this.Controls.Add(this.ConvertSquaresOnlyCheckBox);
             this.Controls.Add(this.UseTransparentFormatCheckBox);
             this.Controls.Add(this.label1);
@@ -414,5 +472,9 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox UseTransparentFormatCheckBox;
         private System.Windows.Forms.CheckBox ConvertSquaresOnlyCheckBox;
+        private System.Windows.Forms.TextBox OnlyLargerThanWidthTextBox;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox OnlyLargerThanHeightTextBox;
     }
 }
