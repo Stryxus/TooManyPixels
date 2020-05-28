@@ -86,7 +86,7 @@ namespace TooManyPixels
 
                 DirectoryInfo source = null;
                 DirectoryInfo destination = null;
-                Invoke((MethodInvoker)delegate ()
+                Invoke((MethodInvoker) delegate ()
                 {
                     source = new DirectoryInfo(SourceFolderPathTextBox.Text);
                     destination = new DirectoryInfo(DestinationFolderPathTextBox.Text);
@@ -96,16 +96,20 @@ namespace TooManyPixels
                 bool isAlphaPresent = false;
                 bool useTransparentFormatOnly = false;
                 bool convertSquareImagesOnly = false;
+                bool downsizeLargerImages = false;
+                bool copySkippedFiles = false;
                 double overallProgressPercentage = 0;
                 int filesProcessed = 0;
                 int compressionLevel = 0;
                 int incompatibleFilesCopied = 0;
+                int imageWidth = 0;
+                int imageHeight = 0;
                 string convertToValue = string.Empty;
                 string ifTransparentValue = string.Empty;
-                List<FileInfo> nonSquareFiles = new List<FileInfo>();
+                int imagesConverted = 0;
                 IEnumerable<FileInfo> sourceFiles = source.EnumerateFiles("*", isRecursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
 
-                Invoke((MethodInvoker) delegate () 
+                Invoke((MethodInvoker) delegate ()
                 { 
                     OverallProgressBar.Maximum = sourceFiles.ToList().Count;
                     isRecursive = RecursiveCheckBox.Checked;
@@ -113,6 +117,10 @@ namespace TooManyPixels
                     convertSquareImagesOnly = ConvertSquaresOnlyCheckBox.Checked;
                     convertToValue = ConvertToDropDown.SelectedItem.ToString();
                     ifTransparentValue = IfTransparentDropDown.SelectedItem.ToString();
+                    downsizeLargerImages = DownsizeCheckbox.Checked;
+                    copySkippedFiles = CopySkippedFilesCheckbox.Checked;
+                    imageWidth = !WidthTextBox.Text.IsEmpty() ? int.Parse(WidthTextBox.Text) : 0;
+                    imageHeight = !HeightTextBox.Text.IsEmpty() ? int.Parse(HeightTextBox.Text) : 0;
                     compressionLevel = int.Parse(CompressionModeDropDown.SelectedItem.ToString().Replace("%", string.Empty));
                     OverallProgressBar.Value = 0;
                 });
@@ -121,7 +129,7 @@ namespace TooManyPixels
                 watch.Start();
                 foreach (FileInfo inFile in sourceFiles)
                 {
-                    Invoke((MethodInvoker) delegate () 
+                    Invoke((MethodInvoker) delegate ()
                     { 
                         CurrentFileLabel.Text = "File: " + inFile.Name;
                     });
@@ -129,7 +137,7 @@ namespace TooManyPixels
                         .Replace(inFile.Extension, "." + convertToValue.ToLower()));
                     if (!inFile.Extension.ContainsAny(".png", ".jpg", ".bmp", ".gif"))
                     {
-                        await FileSystemHelper.Copy(inFile, new FileInfo(outFile.FullName.Replace(outFile.Extension, inFile.Extension)), true);
+                        if (copySkippedFiles) await FileSystemHelper.Copy(inFile, new FileInfo(outFile.FullName.Replace(outFile.Extension, inFile.Extension)), true);
                         incompatibleFilesCopied++;
                         IncrementOverallProgress();
                         continue;
@@ -144,13 +152,20 @@ namespace TooManyPixels
                             using (Bitmap map = new Bitmap(memStr))
                             {
                                 isAlphaPresent = map.PixelFormat == PixelFormat.Format16bppArgb1555 || map.PixelFormat == PixelFormat.Format32bppArgb ||
-                                                 map.PixelFormat == PixelFormat.Format32bppPArgb || map.PixelFormat == PixelFormat.Format64bppArgb || map.PixelFormat == PixelFormat.Format64bppPArgb;
-                                if (map.Width != map.Height && convertSquareImagesOnly)
+                                                 map.PixelFormat == PixelFormat.Format32bppPArgb || map.PixelFormat == PixelFormat.Format64bppArgb || 
+                                                 map.PixelFormat == PixelFormat.Format64bppPArgb;
+                                if (downsizeLargerImages && (map.Width <= imageWidth || map.Height <= imageHeight))
                                 {
-                                    nonSquareFiles.Add(inFile);
+                                    if (copySkippedFiles) await FileSystemHelper.Copy(inFile, new FileInfo(outFile.FullName.Replace(outFile.Extension, inFile.Extension)), true);
+                                    IncrementOverallProgress();
                                     continue;
                                 }
-                                if (isAlphaPresent)
+                                if (map.Width != map.Height && convertSquareImagesOnly)
+                                {
+                                    IncrementOverallProgress();
+                                    continue;
+                                }
+                                if (useTransparentFormatOnly || isAlphaPresent)
                                 {
                                     outFile = new FileInfo(inFile.FullName.Replace(inFile.DirectoryName, destination.FullName)
                                         .Replace(inFile.Extension, "." + ifTransparentValue.ToLower()));
@@ -159,41 +174,37 @@ namespace TooManyPixels
                                 {
                                     using (Image image = Image.Load(imgData, out IImageFormat format))
                                     {
-                                        IImageInfo imageInfo = Image.Identify(inStream);
-
-                                        bool width = false;
-                                        bool height = false;
-                                        Invoke((MethodInvoker) delegate ()
-                                        {
-                                            width = !WidthTextBox.Text.IsEmpty() || int.Parse(WidthTextBox.Text) != 0;
-                                            height = !HeightTextBox.Text.IsEmpty() || int.Parse(HeightTextBox.Text) != 0;
-                                        });
+                                        bool resized = imageWidth != 0 || imageHeight != 0;
                                         image.Mutate(c =>
                                         {
-                                            c.Resize(width ? int.Parse(WidthTextBox.Text) : imageInfo.Width,
-                                                    height ? int.Parse(HeightTextBox.Text) : imageInfo.Height);
+                                            c.Resize(imageWidth != 0 ? imageWidth : map.Width, imageHeight != 0 ? imageHeight : map.Height);
                                         });
-                                        if (!isAlphaPresent || !useTransparentFormatOnly)
+                                        if (useTransparentFormatOnly || isAlphaPresent) ConvertTransparentFormat();
+                                        else ConvertNonTransparentFormat();
+                                        imagesConverted++;
+
+                                        void ConvertNonTransparentFormat()
                                         {
                                             if (convertToValue == "JPG")
                                             {
-                                                image.SaveAsJpeg(outStream, new JpegEncoder 
+                                                image.SaveAsJpeg(outStream, new JpegEncoder
                                                 {
                                                     Quality = 100 - compressionLevel
                                                 });
-                                                AddLog("Converted " + inFile.Name + " to JPG" + GetPercentageReduction());
+                                                LogConversionState("JPG");
                                             }
                                             else if (convertToValue == "BMP")
                                             {
                                                 image.SaveAsBmp(outStream);
-                                                AddLog("Converted " + inFile.Name + " to BMP" + GetPercentageReduction());
+                                                LogConversionState("BMP");
                                             }
                                         }
-                                        else
+
+                                        void ConvertTransparentFormat()
                                         {
                                             if (ifTransparentValue == "PNG")
                                             {
-                                                image.SaveAsPng(outStream, new PngEncoder 
+                                                image.SaveAsPng(outStream, new PngEncoder
                                                 {
                                                     CompressionLevel = compressionLevel == 0 ? PngCompressionLevel.Level0 :
                                                                        compressionLevel == 10 ? PngCompressionLevel.Level1 :
@@ -203,19 +214,29 @@ namespace TooManyPixels
                                                                        compressionLevel == 50 ? PngCompressionLevel.Level5 :
                                                                        compressionLevel == 60 ? PngCompressionLevel.Level6 :
                                                                        compressionLevel == 70 ? PngCompressionLevel.Level7 :
-                                                                       compressionLevel == 80 ? PngCompressionLevel.Level8 : 
+                                                                       compressionLevel == 80 ? PngCompressionLevel.Level8 :
                                                                        compressionLevel == 90 ? PngCompressionLevel.Level9 : PngCompressionLevel.Level9
                                                 });
-                                                AddLog("Converted " + inFile.Name + " to PNG" + GetPercentageReduction());
+                                                LogConversionState("PNG");
                                             }
                                             else if (ifTransparentValue == "GIF")
                                             {
                                                 image.SaveAsGif(outStream);
-                                                AddLog("Converted " + inFile.Name + " to GIF" + GetPercentageReduction());
+                                                LogConversionState("GIF");
                                             }
                                         }
 
-                                        string GetPercentageReduction() => " | Reduction: " + (100D - (((double)outFile.Length / (double)inFile.Length) * 100D)).ToString("0.00") + "%";
+                                        void LogConversionState(string format) 
+                                        {
+                                            if (resized && "." + convertToValue.ToLower() == inFile.Extension.ToLower())
+                                                AddLog("Resized " + inFile.Name + " to " + imageWidth + "x" + imageHeight + " & converted to " + format + " | Reduction " + GetPercentageReduction().ToString("0.00") + "%.");
+                                            else if (resized)
+                                                AddLog("Resized " + inFile.Name + " to " + imageWidth + "x" + imageHeight + " | Reduction " + GetPercentageReduction().ToString("0.00") + "%.");
+                                            else if ("." + convertToValue.ToLower() == inFile.Extension.ToLower())
+                                                AddLog("Converted " + inFile.Name + " to " + format + " | Reduction " + GetPercentageReduction().ToString("0.00") + "%.");
+                                        }
+
+                                        double GetPercentageReduction() => 100D - (100D * ((double)outFile.Length / (double)inFile.Length));
                                     }
                                 }
                             }
@@ -224,7 +245,7 @@ namespace TooManyPixels
                     IncrementOverallProgress();
                 }
                 watch.Stop();
-                Invoke((MethodInvoker) delegate () 
+                Invoke((MethodInvoker) delegate ()
                 {
                     OverallProgressBar.Value = sourceFiles.ToList().Count;
                     OverallProgressLabel.Text = "Overall Progress: 100%"; 
@@ -251,13 +272,8 @@ namespace TooManyPixels
                     + destinationFiles.Count(o => o.Extension.ToLower() == ".gif") + " of GIF | " + destinationFiles.Count(o => o.Extension.ToLower() == ".jpg") + " of JPG | "
                     + destinationFiles.Count(o => o.Extension.ToLower() == ".bmp") + " of BMP");
                 AddLog("    - " + "Size: " + GetMegaBytes(destinationLength) + " | Reduction: " + (100D - ((destinationLength / sourceLength) * 100D)).ToString("0.00") + "%");
-                AddLog("Incompatible files copied over: " + incompatibleFilesCopied);
-
-                if (convertSquareImagesOnly)
-                {
-                    AddLog("\r\nNon Square files skipped: " + nonSquareFiles.Count);
-                    foreach (FileInfo nonSquareFile in nonSquareFiles) AddLog("    - " + nonSquareFile.Name);
-                }
+                AddLog("    - Images Converted: " + imagesConverted);
+                AddLog("    - Incompatible Files" + (copySkippedFiles ? " Copied Over" : string.Empty) + ": " + incompatibleFilesCopied);
 
                 AddLog("\r\nTime taken: " + watch.ElapsedMilliseconds / 1000 + " seconds");
                 ImageCodecInfo.GetImageEncoders().First();
@@ -270,7 +286,7 @@ namespace TooManyPixels
                     {
                         if (overallProgressPercentage == 100) overallProgressPercentage = 0;
                         OverallProgressBar.Value++;
-                        OverallProgressLabel.Text = "Overall Progress: " + (overallProgressPercentage = ((double)filesProcessed++ / (double)sourceFiles.ToList().Count) * 100D).ToString("0.00") + "%";
+                        OverallProgressLabel.Text = "Overall Progress: " + (overallProgressPercentage = 100D * ((double)filesProcessed++ / (double)sourceFiles.ToList().Count)).ToString("0.00") + "%";
                     });
                 }
 
@@ -286,6 +302,11 @@ namespace TooManyPixels
                         HeightTextBox.Enabled = !HeightTextBox.Enabled;
                         RecursiveCheckBox.Enabled = !RecursiveCheckBox.Enabled;
                         StartButton.Enabled = !StartButton.Enabled;
+                        CompressionModeDropDown.Enabled = !CompressionModeDropDown.Enabled;
+                        DownsizeCheckbox.Enabled = !DownsizeCheckbox.Enabled;
+                        UseTransparentFormatCheckBox.Enabled = !UseTransparentFormatCheckBox.Enabled;
+                        ConvertSquaresOnlyCheckBox.Enabled = !ConvertSquaresOnlyCheckBox.Enabled;
+                        CopySkippedFilesCheckbox.Enabled = !CopySkippedFilesCheckbox.Enabled;
                     });
                 }
 
@@ -294,7 +315,7 @@ namespace TooManyPixels
 
             void AddLog(object log)
             {
-                Invoke((MethodInvoker) delegate () 
+                Invoke((MethodInvoker) delegate ()
                 {
                     ConsoleTextBox.Text += log.ToString() + "\r\n";
                     ConsoleTextBox.SelectionStart = ConsoleTextBox.Text.Length;
@@ -305,6 +326,8 @@ namespace TooManyPixels
 
         private void HeightTextBox_TextChanged(object sender, EventArgs e) => CheckSizeValueIntegrity((TextBox)sender);
         private void WidthTextBox_TextChanged(object sender, EventArgs e) => CheckSizeValueIntegrity((TextBox)sender);
+        private void OnlyLargerThanWidthTextBox_TextChanged(object sender, EventArgs e) => CheckSizeValueIntegrity((TextBox)sender);
+        private void OnlyLargerThanHeightTextBox_TextChanged(object sender, EventArgs e) => CheckSizeValueIntegrity((TextBox)sender);
 
         private void CheckSizeValueIntegrity(TextBox box)
         {
