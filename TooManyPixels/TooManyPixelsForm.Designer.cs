@@ -106,7 +106,7 @@
             this.StartButton.Font = new System.Drawing.Font("Bahnschrift Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.StartButton.Location = new System.Drawing.Point(13, 993);
             this.StartButton.Name = "StartButton";
-            this.StartButton.Size = new System.Drawing.Size(1153, 69);
+            this.StartButton.Size = new System.Drawing.Size(1153, 62);
             this.StartButton.TabIndex = 3;
             this.StartButton.Text = "Start Processing";
             this.StartButton.UseVisualStyleBackColor = true;
@@ -415,32 +415,31 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.ProgressBar OverallProgressBar;
-        private System.Windows.Forms.Label OverallProgressLabel;
-        private System.Windows.Forms.Label CurrentFileLabel;
         private System.Windows.Forms.RichTextBox ConsoleTextBox;
         private System.Windows.Forms.Button StartButton;
-        private System.Windows.Forms.TextBox HeightTextBox;
-        private System.Windows.Forms.TextBox WidthTextBox;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox SourceFolderPathTextBox;
-        private System.Windows.Forms.TextBox DestinationFolderPathTextBox;
         private System.Windows.Forms.Button SourceFolderSelectionButton;
         private System.Windows.Forms.Button DestinationFolderSelectionButton;
-        private System.Windows.Forms.ComboBox IfTransparentDropDown;
-        private System.Windows.Forms.ComboBox ConvertToDropDown;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.CheckBox RecursiveCheckBox;
-        private System.Windows.Forms.ComboBox CompressionModeDropDown;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.CheckBox UseTransparentFormatCheckBox;
-        private System.Windows.Forms.CheckBox ConvertSquaresOnlyCheckBox;
-        private System.Windows.Forms.CheckBox DownsizeCheckbox;
-        private System.Windows.Forms.CheckBox CopySkippedFilesCheckbox;
+        internal System.Windows.Forms.ProgressBar OverallProgressBar;
+        internal System.Windows.Forms.Label CurrentFileLabel;
+        internal System.Windows.Forms.TextBox HeightTextBox;
+        internal System.Windows.Forms.TextBox WidthTextBox;
+        internal System.Windows.Forms.TextBox SourceFolderPathTextBox;
+        internal System.Windows.Forms.TextBox DestinationFolderPathTextBox;
+        internal System.Windows.Forms.ComboBox IfTransparentDropDown;
+        internal System.Windows.Forms.ComboBox ConvertToDropDown;
+        internal System.Windows.Forms.CheckBox RecursiveCheckBox;
+        internal System.Windows.Forms.ComboBox CompressionModeDropDown;
+        internal System.Windows.Forms.CheckBox UseTransparentFormatCheckBox;
+        internal System.Windows.Forms.CheckBox ConvertSquaresOnlyCheckBox;
+        internal System.Windows.Forms.CheckBox DownsizeCheckbox;
+        internal System.Windows.Forms.CheckBox CopySkippedFilesCheckbox;
+        internal System.Windows.Forms.Label OverallProgressLabel;
     }
 }

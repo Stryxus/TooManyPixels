@@ -6,15 +6,17 @@ using System.Windows.Forms;
 
 namespace TooManyPixels
 {
-    static class Program
+    internal static class Program
     {
+        internal static TooManyPixelsForm Form;
+
         [STAThread]
-        static void Main()
+        internal static void Main(string[] args)
         {
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new TooManyPixelsForm());
+            Application.Run(Form = new TooManyPixelsForm());
         }
     }
 }
